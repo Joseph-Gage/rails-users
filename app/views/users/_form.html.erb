@@ -1,0 +1,67 @@
+<%= form_with(model: user, local: true) do |form| %>
+  <% if user.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h2>
+
+      <ul>
+      <% user.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name, id: :user_name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :email %>
+    <%= form.text_field :email, id: :user_email %>
+  </div>
+
+  <div class="field">
+    <%= form.label :password_digest %>
+    <%= form.text_field :password_digest, id: :user_password_digest %>
+  </div>
+
+  <div class="field">
+    <%= form.label :remember_digest %>
+    <%= form.text_field :remember_digest, id: :user_remember_digest %>
+  </div>
+
+  <div class="field">
+    <%= form.label :admin %>
+    <%= form.check_box :admin, id: :user_admin %>
+  </div>
+
+  <div class="field">
+    <%= form.label :activation_digest %>
+    <%= form.text_field :activation_digest, id: :user_activation_digest %>
+  </div>
+
+  <div class="field">
+    <%= form.label :activated %>
+    <%= form.check_box :activated, id: :user_activated %>
+  </div>
+
+  <div class="field">
+    <%= form.label :activated_at %>
+    <%= form.datetime_select :activated_at, id: :user_activated_at %>
+  </div>
+
+  <div class="field">
+    <%= form.label :reset_digest %>
+    <%= form.text_field :reset_digest, id: :user_reset_digest %>
+  </div>
+
+  <div class="field">
+    <%= form.label :reset_sent_at %>
+    <%= form.datetime_select :reset_sent_at, id: :user_reset_sent_at %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
