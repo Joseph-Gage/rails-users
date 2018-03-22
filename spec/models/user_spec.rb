@@ -13,4 +13,10 @@ RSpec.describe User, type: :model do
   it 'should be valid' do
     expect(my_user).to be_valid
   end
+
+  it 'should make email address lower case' do
+    my_user.email = 'BIG@website.com'
+    my_user.save
+    expect(my_user.email).to eq('big@website.com')
+  end
 end
