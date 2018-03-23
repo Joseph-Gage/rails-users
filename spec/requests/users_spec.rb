@@ -17,10 +17,12 @@ RSpec.describe "Users", type: :request do
       before { post '/users', params: valid_params }
 
       it 'should add a user to the database and render user view' do
-        expect(User.first.name).to eq('foobar')
-        expect(response).to redirect_to('/users/1')
+        created_user = User.first
+        expect(created_user.name).to eq('foobar')
+        expect(response).to redirect_to('/users/' + created_user.id.to_s)
         follow_redirect!
         expect(response).to render_template(:show)
+        expect(response.body).to include('Welcome to Ideaz')
       end
     end
 
