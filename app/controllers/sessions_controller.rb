@@ -11,7 +11,7 @@ class SessionsController < ApplicationController
         format.json { render :show, status: :ok, location: user }
       else
         format.html { redirect_to signin_path, notice: 'Invalid email/password combination' }
-        format.json { render json: @user.errors, status: :unauthorized }
+        format.json { render json: user.errors, status: :unauthorized }
       end
     end
   end
