@@ -16,10 +16,11 @@ RSpec.describe "Users", type: :request do
     context 'when the request is valid' do
       before { post '/users', params: valid_params }
 
-      it 'should add a user to the database and render user view' do
+      it 'should add a user to the database, sign the user in and render user view' do
         created_user = User.first
         expect(created_user.name).to eq('foobar')
         expect(response).to redirect_to(created_user)
+        expect(is_signed_in?).to be_truthy
         follow_redirect!
         expect(response).to render_template(:show)
         expect(response.body).to include('Welcome to Ideaz')
