@@ -19,7 +19,7 @@ RSpec.describe "Users", type: :request do
       it 'should add a user to the database and render user view' do
         created_user = User.first
         expect(created_user.name).to eq('foobar')
-        expect(response).to redirect_to('/users/' + created_user.id.to_s)
+        expect(response).to redirect_to(created_user)
         follow_redirect!
         expect(response).to render_template(:show)
         expect(response.body).to include('Welcome to Ideaz')
