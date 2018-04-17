@@ -19,7 +19,7 @@ class SessionsController < ApplicationController
 
   def destroy
     respond_to do |format|
-      sign_out
+      sign_out if signed_in?
       format.html { redirect_to signin_path }
       format.json { render json: 'signed out successfully', status: :no_content }
     end

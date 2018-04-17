@@ -38,6 +38,11 @@ RSpec.describe 'Sessions', type: :request do
       delete signout_path
       expect(is_signed_in?).to be_falsey
       expect(response).to redirect_to(signin_path)
+      # simulate user clicking sign out in a second window
+      delete signout_path
+      follow_redirect!
+      expect(response).to render_template(:new)
+      expect(response.body).to include('Sign in')
     end
   end
 end

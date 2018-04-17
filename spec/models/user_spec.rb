@@ -22,4 +22,10 @@ RSpec.describe User, type: :model do
     my_user.save
     expect(my_user.email).to eq('big@website.com')
   end
+
+  describe 'authenticated?' do
+    it 'should return false for a user with nil digest' do
+      expect(my_user.authenticated?('')).to be_falsey
+    end
+  end
 end
