@@ -7,6 +7,7 @@ class SessionsController < ApplicationController
     respond_to do |format|
       if user && user.authenticate(params[:session][:password])
         sign_in user
+        remember user
         format.html { redirect_to user }
         format.json { render :show, status: :ok, location: user }
       else
