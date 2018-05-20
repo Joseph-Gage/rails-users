@@ -18,10 +18,19 @@
                                           placeholder: 'Enter Password' %>
     </div>
 
+    <div class="form-check">
+      <%= form.check_box  :remember_me, class: 'form-check-input' %>
+      <%= form.label :remember_me, 'Remember me on this computer', class: 'form-check-label' %>
+    </div>
+
+    </br>
+
     <div class="text-center">
       <%= form.submit 'Sign in', class: 'btn btn-primary' %>
     </div>
   </div>
 <% end %>
+
+</br>
 
 <p>New user? <%= link_to "Sign up now!", signup_path %></p>
