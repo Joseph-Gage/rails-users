@@ -1,8 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe 'Sessions', type: :request do
+  let!(:my_user) { create(:user) }
+
   describe 'Sign in' do
-    let!(:my_user) { create(:user) }
     let(:valid_params) { { session: { email: my_user.email, password: my_user.password } } }
 
     context 'when user signs in with correct credentials' do
@@ -30,7 +31,6 @@ RSpec.describe 'Sessions', type: :request do
   end
 
   describe 'Sign out' do
-    let!(:my_user) { create(:user) }
     let(:valid_params) { { session: { email: my_user.email, password: my_user.password } } }
     
     it 'clears the user from the session and redirects to the sign in page' do
@@ -43,6 +43,19 @@ RSpec.describe 'Sessions', type: :request do
       follow_redirect!
       expect(response).to render_template(:new)
       expect(response.body).to include('Sign in')
+    end
+  end
+
+  describe 'Sign in and Remember' do
+    it 'adds correct remember token to cookies if remember me selected' do
+      sign_in_as(my_user, remember_me: '1')
+      expect(cookies['remember_token']).to eq(assigns(:user).remember_token)
+    end
+
+    it 'removes old remember token on new sign in' do
+      sign_in_as(my_user, remember_me: '1')
+      sign_in_as(my_user, remember_me: '0')
+      expect(cookies['remember_token']).to be_empty
     end
   end
 end
