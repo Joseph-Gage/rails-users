@@ -1,13 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe "Users", type: :request do
-  describe "GET /users" do
-    it "works! (now write some real specs)" do
-      get users_path
-      expect(response).to have_http_status(200)
-    end
-  end
-
   describe 'POST /users' do
     let(:valid_params) { { user: { name: 'foobar',
                                      email: 'foo@bar.com', 
@@ -32,6 +25,41 @@ RSpec.describe "Users", type: :request do
 
       it 'should render new user view with errors' do
         expect(response).to render_template(:new)
+        expect(response.body).to include('error')
+      end
+    end
+  end
+
+  describe 'PATCH /users/:id' do
+    let!(:my_user) { create(:user) }
+
+    context 'when the request is valid' do
+      let(:valid_params) { { user: { name: 'newname',
+        email: 'new@email', 
+        password: '', 
+        password_confirmation: '' } } }
+      before { patch "/users/#{my_user.id}", params: valid_params }
+
+      it 'should update the user and render user view' do
+        edited_user = User.first
+        expect(edited_user.name).to eq('newname')
+        expect(edited_user.email).to eq('new@email')
+        expect(response).to redirect_to(edited_user)
+        follow_redirect!
+        expect(response).to render_template(:show)
+        expect(response.body).to include('User was successfully updated.')
+      end
+    end
+
+    context 'when the request is invalid' do
+      let(:invalid_params) { { user: { name: 'newname',
+        email: 'new@email', 
+        password: 'password1', 
+        password_confirmation: 'password2' } } }
+      before { patch "/users/#{my_user.id}", params: invalid_params }
+
+      it 'should render new user view with errors' do
+        expect(response).to render_template(:edit)
         expect(response.body).to include('error')
       end
     end
