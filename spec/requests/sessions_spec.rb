@@ -48,13 +48,13 @@ RSpec.describe 'Sessions', type: :request do
 
   describe 'Sign in and Remember' do
     it 'adds correct remember token to cookies if remember me selected' do
-      sign_in_as(my_user, remember_me: '1')
+      sign_in_post(my_user, remember_me: '1')
       expect(cookies['remember_token']).to eq(assigns(:user).remember_token)
     end
 
     it 'removes old remember token on new sign in' do
-      sign_in_as(my_user, remember_me: '1')
-      sign_in_as(my_user, remember_me: '0')
+      sign_in_post(my_user, remember_me: '1')
+      sign_in_post(my_user, remember_me: '0')
       expect(cookies['remember_token']).to be_empty
     end
   end

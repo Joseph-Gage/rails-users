@@ -31,13 +31,15 @@ RSpec.describe "Users", type: :request do
   end
 
   describe 'PATCH /users/:id' do
-    let!(:my_user) { create(:user) }
+    let!(:users) { create_list(:user, 2) }
+    let!(:my_user) { users[0] }
+    let(:valid_params) { { user: { name: 'newname',
+      email: 'new@email', 
+      password: '', 
+      password_confirmation: '' } } }
 
     context 'when the request is valid' do
-      let(:valid_params) { { user: { name: 'newname',
-        email: 'new@email', 
-        password: '', 
-        password_confirmation: '' } } }
+      before { sign_in_post(my_user) }
       before { patch "/users/#{my_user.id}", params: valid_params }
 
       it 'should update the user and render user view' do
@@ -56,11 +58,50 @@ RSpec.describe "Users", type: :request do
         email: 'new@email', 
         password: 'password1', 
         password_confirmation: 'password2' } } }
+      before { sign_in_post(my_user) }
       before { patch "/users/#{my_user.id}", params: invalid_params }
 
       it 'should render new user view with errors' do
         expect(response).to render_template(:edit)
         expect(response.body).to include('error')
+      end
+    end
+
+    context 'when not signed in' do
+      it 'should redirect from edit to sign in page with notice' do
+        get edit_user_path(my_user)
+        expect(response).to redirect_to(signin_path)
+        follow_redirect!
+        expect(response).to render_template(:new)
+        expect(response.body).to include('Please sign in.')
+      end
+
+      it 'should redirect from update to sign in page with notice' do
+        patch "/users/#{my_user.id}", params: valid_params
+        expect(response).to redirect_to(signin_path)
+        follow_redirect!
+        expect(response).to render_template(:new)
+        expect(response.body).to include('Please sign in.')
+      end
+    end
+
+    context 'when signed in as wrong user' do
+      before { sign_in_post(users[1]) }
+
+      it 'should redirect from edit to homepage with notice' do
+        get edit_user_path(my_user)
+        expect(response).to redirect_to(root_url)
+        follow_redirect!
+        expect(response).to render_template(:new)
+        expect(response.body).to include('Unauthorized.')
+      end
+
+      it 'should redirect from update to homepage with notice' do
+        patch "/users/#{my_user.id}", params: valid_params
+        expect(response).to redirect_to(root_url)
+        follow_redirect!
+        expect(response).to render_template(:new)
+        expect(response.body).to include('Unauthorized.')
       end
     end
   end
