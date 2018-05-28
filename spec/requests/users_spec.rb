@@ -30,6 +30,16 @@ RSpec.describe "Users", type: :request do
     end
   end
 
+  describe 'GET /users/:id/edit' do
+    let!(:my_user) { create(:user) }
+
+    it 'should do friendly forwarding' do
+      get edit_user_path(my_user)
+      sign_in_post(my_user)
+      expect(response).to redirect_to(edit_user_path(my_user))
+    end
+  end
+
   describe 'PATCH /users/:id' do
     let!(:users) { create_list(:user, 2) }
     let!(:my_user) { users[0] }
@@ -39,10 +49,9 @@ RSpec.describe "Users", type: :request do
       password_confirmation: '' } } }
 
     context 'when the request is valid' do
-      before { sign_in_post(my_user) }
-      before { patch "/users/#{my_user.id}", params: valid_params }
-
       it 'should update the user and render user view' do
+        sign_in_post(my_user)
+        patch "/users/#{my_user.id}", params: valid_params
         edited_user = User.first
         expect(edited_user.name).to eq('newname')
         expect(edited_user.email).to eq('new@email')

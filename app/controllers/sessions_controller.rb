@@ -1,19 +1,14 @@
 class SessionsController < ApplicationController
-  def new
-  end
+  def new; end
 
   def create
     @user = User.find_by(email: params[:session][:email].downcase)
-    respond_to do |format|
-      if @user && @user.authenticate(params[:session][:password])
-        sign_in @user
-        params[:session][:remember_me] == '1' ? remember(@user) : forget(@user)
-        format.html { redirect_to @user }
-        format.json { render :show, status: :ok, location: @user }
-      else
-        format.html { redirect_to signin_path, notice: 'Invalid email/password combination' }
-        format.json { render json: @user.errors, status: :unauthorized }
-      end
+    if @user && @user.authenticate(params[:session][:password])
+      sign_in @user
+      params[:session][:remember_me] == '1' ? remember(@user) : forget(@user)
+      redirect_back_or(@user)
+    else
+      redirect_to signin_path, notice: 'Invalid email/password combination'
     end
   end
 
