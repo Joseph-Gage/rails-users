@@ -1,6 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe "Users", type: :request do
+  describe 'GET /users' do
+    context 'when user not signed in' do
+      it 'should redirect to sign in page' do
+        get users_path
+        expect(response).to redirect_to(signin_url)
+      end
+    end
+  end
+
   describe 'POST /users' do
     let(:valid_params) { { user: { name: 'foobar',
                                      email: 'foo@bar.com', 
@@ -33,10 +42,12 @@ RSpec.describe "Users", type: :request do
   describe 'GET /users/:id/edit' do
     let!(:my_user) { create(:user) }
 
-    it 'should do friendly forwarding' do
+    it 'should do friendly forwarding on first attempt' do
       get edit_user_path(my_user)
       sign_in_post(my_user)
       expect(response).to redirect_to(edit_user_path(my_user))
+      sign_in_post(my_user)
+      expect(response).to redirect_to(my_user)
     end
   end
 
